@@ -15,9 +15,11 @@ import com.kataboard.repositories.TaskRepository;
 import com.kataboard.repositories.UserRepository;
 import com.kataboard.services.interfaces.ITaskService;
 import com.kataboard.util.TaskStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -155,6 +157,18 @@ public class TaskServiceImpl implements ITaskService {
         }
 
         taskRepository.delete(task);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(Long taskId, TaskStatus newStatus) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new NotFoundException("Tarea no encontrada"));
+
+        task.setStatus(newStatus);
+        task.setUpdatedAt(LocalDateTime.now());
+
+        taskRepository.save(task);
     }
 
     private TaskResponse toResponse(Task task) {

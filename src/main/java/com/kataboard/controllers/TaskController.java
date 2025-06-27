@@ -1,5 +1,6 @@
 package com.kataboard.controllers;
 
+import com.kataboard.dtos.task.StatusUpdateRequest;
 import com.kataboard.dtos.task.TaskRequest;
 import com.kataboard.dtos.task.TaskResponse;
 import com.kataboard.security.JwtUtil;
@@ -55,5 +56,11 @@ public class TaskController {
         String email = jwtUtil.extractUsername(jwtUtil.resolveToken(httpRequest));
         taskService.delete(id, email);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody StatusUpdateRequest request) {
+        taskService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok().build();
     }
 }
